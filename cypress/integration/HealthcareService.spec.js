@@ -1,53 +1,37 @@
 const { assert } = require("console")
 
 describe('Brows web', () => {
-    it('Open homr page', () => {
-        cy.visit('https://katalon-demo-cura.herokuapp.com')
-        cy.get('#menu-toggle').click()
-    })
-
 
     it('Open page login', () => {
         cy.visit('https://katalon-demo-cura.herokuapp.com/profile.php#login')
-        cy.get('#txt-username').click(expect("John Doe").to.equal("John Doe"))
-        cy.get('#txt-password').click(expect("ThisIsNotAPassword").to.equal("ThisIsNotAPassword"))
+        cy.get('#txt-username').type("John Doe")
+        cy.get('#txt-password').type("ThisIsNotAPassword")
         cy.get('#btn-login').click()
+      
     })
 
-    it('test check text box page login', () => {
-        let username = 'John Doe'
-        let password = 'ThisIsNotAPassword'
-
-        cy.visit('https://katalon-demo-cura.herokuapp.com/profile.php#login')
-        //cy.get(':nth-child(1) > .col-sm-8 > .input-group > .form-control')
-        cy.get('#txt-username')
-            // Still, nothing happens yet
-            .then(($el) => {
-                // this line evaluates after the .then executes
-                username = $el.text()
-            })
-
-        cy.get('#txt-password')
-            .then(($al) =>{
-                password =$al.text()
-            })
-
-        if (username) {
-            // evaluates immediately as undefined
-            cy.contains('Username')
-        }if(password){
-            cy.contains('Password')
-        } 
-        else {
-            cy.get('#btn-login').click()
-        } 
-
-    })
-
-    it('put data username only' ,() =>{
+    it("Mack appionment" , () =>{
         cy.visit('https://katalon-demo-cura.herokuapp.com/profile.php#login')
 
-        let username = 'John Doe'
-        cy.get('#txt-username').should(username)
+        cy.get('#txt-username').type("John Doe")
+        cy.get('#txt-password').type("ThisIsNotAPassword")
+        cy.get('#btn-login').click()
+
+        cy.get('#combo_facility').select(2)
+        cy.get('#appointment').click()
+        cy.get(':nth-child(3) > .col-sm-4').click()
+        cy.get('#txt_visit_date').type('11/23/2021')
+
+        cy.get(':nth-child(5) > .col-sm-offset-3').click()
+        
+        cy.get('#txt_comment').click({force: true}).type('hi')
+        cy.get('#btn-book-appointment').click()
+
+        cy.url().should('include' , '/appointment.php#summary')
+
+        //check value 
+        cy.get('#facility').should('have.text' , 'Seoul CURA Healthcare Center')
+        cy.get('#hospital_readmission').should('have.text' , 'No')
+        cy.get('#program').should('have.text' , 'Medicaid')
     })
 })
