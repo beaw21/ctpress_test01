@@ -1,41 +1,62 @@
 describe('Check Histpry appointment', () => {
-    it('Open page appointment check book', () => {
+
+    before(() =>{
         cy.visit('https://katalon-demo-cura.herokuapp.com/profile.php#login')
         cy.get('#txt-username').type("John Doe")
         cy.get('#txt-password').type("ThisIsNotAPassword")
         cy.get('#btn-login').click()
-        cy.get('#menu-toggle').click()
-        
-        //book appointment case 1
-        cy.get('#combo_facility').select(1)
-        cy.get('.col-sm-4 > :nth-child(2)').click()
-        cy.get('#txt_visit_date').type("24/11/2021")
-        cy.get(':nth-child(5) > .col-sm-offset-3').click()
-        cy.get('#btn-book-appointment').click()
+    })
 
-        //btn back page book appointment
-        cy.get('.text-center > .btn').click()
+    function bookAppointment(Facility,ApplyForHospitalReadmission,HealthcareProgram,VisitDate,Comment){
+        cy.get('#combo_facility').select(Facility)
+        if(ApplyForHospitalReadmission == 1){
+            cy.get('.checkbox-inline').click()
+        }else{}
+        if(HealthcareProgram == 'Medicare' ){
+            cy.get(':nth-child(3) > .col-sm-4 > :nth-child(1)').click()
+        }if(HealthcareProgram == 'Medicaid' ){
+            cy.get('.col-sm-4 > :nth-child(2)').click()
+        }else{
+            cy.get('.col-sm-4 > :nth-child(3)').click()
+        }
+        cy.get('#txt_visit_date').type(VisitDate)
+        if(Comment == 1){
+            cy.get('#txt_comment').click({ force: true }).type("Hello word")
+        }else{}
+    }
 
-        //book appointment case 2
-        cy.get('#combo_facility').select(2)
-        cy.get(':nth-child(3) > .col-sm-4 > :nth-child(1)').click()
-        cy.get('#txt_visit_date').type("24/11/2021")
-        cy.get(':nth-child(5) > .col-sm-offset-3').click()
-        cy.get('#btn-book-appointment').click()
+    function cilckBackToAppointmentPage(btnBook,url,btnHome){
+        cy.get('#btn-book-appointment').click(btnBook)
+        cy.url(url).should('include' , '/appointment.php#summary')
+        cy.get('.text-center > .btn').click(btnHome)
+    }
 
-        //btn menus 
-        cy.get('#menu-toggle > .fa').click()
-        cy.get(':nth-child(4) > a').click()
+    function cilckMenuGoToHistoryPage(btnMenu,btnHistory,urlHistorypage){
+        //click menu bar go to btn history
+        cy.get('#menu-toggle > .fa').click(btnMenu)
+        cy.get(':nth-child(4) > a').click(btnHistory)
+        cy.url(urlHistorypage).should('include' , '/history.php#history')
+    }
+    it('book appionment', () => {
+        //part
+        bookAppointment( 0, 1, 'Medicare' , '23/8/1997' , 0)
+        cilckBackToAppointmentPage()
+        //present
+        bookAppointment( 1, 0, 'Medicaid' , '11/2/2021' , 1)
+        cilckBackToAppointmentPage()
+        //Future
+        bookAppointment( 1, 0, 'Medicaid' , '21/5/3031' , 1)
+        cilckBackToAppointmentPage()
+        //cilck history
+        cilckMenuGoToHistoryPage()
+    })
 
-        cy.url().should('include' , '/history.php#history')
-
-        //check history
-        cy.get(':nth-child(1) > .panel > .panel-body > :nth-child(1) > label').should('have.text' , 'Facility')
-        cy.get(':nth-child(1) > .panel > .panel-body > :nth-child(4) > label').should('have.text' ,'Apply for hospital readmission')
-        cy.get(':nth-child(1) > .panel > .panel-body > :nth-child(7) > label').should('have.text' , 'Healthcare Program')
-        cy.get(':nth-child(1) > .panel > .panel-body > :nth-child(10) > label').should('have.text' , 'Comment')
-
-        //btn back home page
-        cy.get('.text-center > .btn').click()
+    after(()=>{
+        //card css 
+        cy.get('.container > :nth-child(2)').should('have.length' , 1)
+        cy.get('.container > :nth-child(2) > :nth-child(1)').should('have.length', 1)
+        //check data out put
+        cy.get(':nth-child(1) > .panel > .panel-body > :nth-child(2) > #facility').should('have.text' ,'Tokyo CURA Healthcare Center' )
+        cy.get(':nth-child(2) > .panel > .panel-body > :nth-child(2) > #facility').should('have.text' , 'Hongkong CURA Healthcare Center')
     })
 })
