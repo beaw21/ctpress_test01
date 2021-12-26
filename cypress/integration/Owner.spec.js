@@ -5,14 +5,14 @@ describe('Check Histpry appointment', () => {
     })
 
     function login(username ,password ){
-        if(username == "Admin"){
-            cy.get('[id$=userName]').type("Admin")
+        if(username == "User2"){
+            cy.get('[id$=userName]').type("User2")
         }else{
             cy.get('[id$=userName]').type("John")
         }
 
-        if(password == "admin"){
-            cy.get('[id$=password]').type("admin")
+        if(password == "check"){
+            cy.get('[id$=password]').type("check")
         }else{
             cy.get('[id$=password]').type("password")
         }
@@ -32,8 +32,8 @@ describe('Check Histpry appointment', () => {
         cy.get('[id$=c]').clear()
     }
 
-    it('testAdminEquilateralTriangle ', () => {
-        login("Admin" , "admin" )
+    it('test owner EquilateralTriangle ', () => {
+        login("User2" , "check" )
         clickLogin()
         cy.get('[id$=a]').type("5")
         cy.get('[id$=b]').type("5")
@@ -41,27 +41,29 @@ describe('Check Histpry appointment', () => {
         clickTriangle()
         clear()
     })
-
-    it('testAdminIsoscelesTriangle ', () => {
-        
-        cy.get('[id$=a]').type("5")
-        cy.get('[id$=b]').type("5")
-        cy.get('[id$=c]').type("5")
+ it('test owner ScaleneTriangle ', () => {
+        cy.get('[id$=a]').type("7")
+        cy.get('[id$=b]').type("8")
+        cy.get('[id$=c]').type("9")
         clickTriangle()
         clear()
 
     })
 
-    it('testAdminScaleneTriangle ', () => {
-        cy.get('[id$=a]').type("7")
+    it('test owner IsoscelesTriangle ', () => {
+        cy.get('[id$=a]').type("3")
         cy.get('[id$=b]').type("7")
         cy.get('[id$=c]').type("3")
         clickTriangle()
+        //cy.get('.error').should('have.text' , 'This Is not Triangle')
+        //cy.get('.error').should('have.text' , 'This is Not Triangle')
         clear()
 
     })
 
-    it('testAdminNotTriangle ', () => {
+   
+
+    it('test owner NotTriangle ', () => {
         cy.get('[id$=a]').type("7.0")
         cy.get('[id$=b]').type("8.0")
         cy.get('[id$=c]').type("9.0")
